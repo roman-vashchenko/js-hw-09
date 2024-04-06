@@ -11,12 +11,17 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    console.log(selectedDates[0]);
-    console.log(options.defaultDate);
-    if (selectedDates[0].getTime() > options.defaultDate.getTime()) {
-      btn.disabled = false;
-    }
+    // console.log(selectedDates[0]);
+    getTime.call(options, selectedDates[0]);
+    // if (selectedDates[0].getTime() > options.defaultDate.getTime()) {
+    //   btn.disabled = false;
+    // }
   },
 };
 
 const calendar = flatpickr(inputEl, options);
+
+function getTime(date) {
+  console.log(date);
+  console.log(this.defaultDate);
+}
