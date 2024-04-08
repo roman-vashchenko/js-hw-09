@@ -1,9 +1,18 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { convertMs, addLeadingZero } from '../js/functions';
 
-const inputEl = document.getElementById('datetime-picker');
+const refs = {
+  input: document.getElementById('datetime-picker'),
+  btn: document.querySelector('button'),
+  days: document.querySelector('span[data-days]'),
+  hours: document.querySelector('span[data-hours]'),
+  minutes: document.querySelector('span[data-minutes]'),
+  seconds: document.querySelector('span[data-seconds]'),
+};
 
-const btn = document.querySelector('button');
+refs.btn.addEventListener('click', onStartTime);
 
 const options = {
   enableTime: true,
@@ -11,17 +20,44 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    // console.log(selectedDates[0]);
     getTime.call(options, selectedDates[0]);
-    // if (selectedDates[0].getTime() > options.defaultDate.getTime()) {
-    //   btn.disabled = false;
-    // }
   },
 };
 
-const calendar = flatpickr(inputEl, options);
+flatpickr(refs.input, options);
+
+const DELAY = 1000;
+let timerId = null;
+let selectedTime = null;
 
 function getTime(date) {
-  console.log(date);
-  console.log(this.defaultDate);
+  if (date > this.defaultDate) {
+    selectedTime = date;
+    refs.btn.disabled = false;
+  } else {
+    Notify.info('Please choose a date in the future');
+  }
+}
+
+function onStartTime() {
+  setTimer();
+
+  timerId = setInterval(setTimer, DELAY);
+}
+
+function setTimer() {
+  const currentDate = Date.now();
+  const diff = selectedTime - currentDate;
+  outputTimerValue(convertMs(diff));
+  if (diff < 1000) {
+    clearInterval(timerId);
+    return;
+  }
+}
+
+function outputTimerValue({ days, hours, minutes, seconds }) {
+  refs.days.textContent = addLeadingZero(days);
+  refs.hours.textContent = addLeadingZero(hours);
+  refs.minutes.textContent = addLeadingZero(minutes);
+  refs.seconds.textContent = addLeadingZero(seconds);
 }
