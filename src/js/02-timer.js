@@ -28,12 +28,13 @@ flatpickr(refs.input, options);
 
 const DELAY = 1000;
 let timerId = null;
-let selectedTime = null;
+let selectedTime = 0;
 
 function getTime(date) {
   if (date > this.defaultDate) {
     selectedTime = date;
     refs.btn.disabled = false;
+    setTimer();
   } else {
     Notify.info('Please choose a date in the future');
   }
